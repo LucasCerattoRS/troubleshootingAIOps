@@ -1,0 +1,52 @@
+{
+  "incident": {
+    "id": "INC-2026-07-21-C9D",
+    "timestamp": "2026-07-21T07:41:10Z",
+    "window": {
+      "start": "2026-07-21T07:38:10Z",
+      "end": "2026-07-21T07:41:10Z"
+    }
+  },
+  "symptoms": [
+    {
+      "type": "API_ERROR",
+      "endpoint": "*",
+      "status_code": 500,
+      "error_rate_percent": 100,
+      "started_at": "2026-07-21T07:38:20Z"
+    }
+  ],
+  "signals": {
+    "application": {
+      "source": "express-health",
+      "status": "down",
+      "uptime_seconds": 120,
+      "logs": [
+        { "level": "ERROR", "message": "SQLITE_CORRUPT: database disk image is malformed", "timestamp": "2026-07-21T07:38:20Z" },
+        { "level": "ERROR", "message": "SQLITE_CORRUPT: database disk image is malformed", "timestamp": "2026-07-21T07:38:41Z" }
+      ]
+    },
+    "database": {
+      "source": "sqlite-health",
+      "integrity_check": "FAILED: row 4213 missing from index idx_func_matricula",
+      "journal_mode": "wal",
+      "file_size_mb": 48,
+      "last_backup_at": "2026-07-20T07:38:00Z",
+      "last_backup_age_hours": 24
+    },
+    "system": {
+      "source": "metrics",
+      "cpu_percent": 8,
+      "memory_percent": 35,
+      "disk_percent": 61
+    },
+    "network": {
+      "source": "tailscale-status",
+      "tailscale": "connected",
+      "ping_ms": 19
+    },
+    "events": [
+      { "type": "SYSTEM", "message": "unexpected shutdown detected (dirty boot)", "timestamp": "2026-07-21T07:37:50Z" }
+    ]
+  }
+}

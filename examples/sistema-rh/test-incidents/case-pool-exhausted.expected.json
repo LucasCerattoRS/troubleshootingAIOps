@@ -1,0 +1,74 @@
+{
+  "diagnosis": {
+    "root_cause": "Database connection pool exhausted by a spike in concurrent requests",
+    "confidence": 0.95,
+    "reasoning": [
+      "db.latency_ms jumped to 5000 during the window",
+      "pool active/size = 10/10 (100% utilization) with 3 connections waiting",
+      "SQLITE_BUSY errors in application logs coincide with the wait queue growing",
+      "requests_per_minute = 210 is a spike vs the ~40 baseline",
+      "no deploy in the window (last deploy 1.2.1 at 09:05) — rules out a code regression",
+      "cpu 45% / disk 60% / tailscale connected — rules out resource and VPN causes"
+    ],
+    "alternative_hypotheses": [
+      {
+        "hypothesis": "Slow query holding connections open",
+        "confidence": 0.30,
+        "why_less_likely": "no slow-query warnings in logs; latency is from pool waiting, not query time"
+      }
+    ],
+    "similar_incidents": [
+      { "id": "INC-2026-07-19-X2K", "when": "2 days ago", "root_cause": "pool exhausted", "resolution_time_minutes": 1, "action_taken": "increased pool to 20" }
+    ],
+    "affects_production": true,
+    "data_at_risk": false
+  },
+  "impact": {
+    "affected_percentage": 15,
+    "affected_count": "~50 funcionarios",
+    "affected_features": ["GET /api/dados", "PUT /api/epis"],
+    "severity": "HIGH",
+    "duration_estimate": "<5min if action taken",
+    "business_impact": "Consulta e cadastro de funcionarios/EPIs lentos durante o pico de trabalho"
+  },
+  "actions": [
+    {
+      "priority": 1,
+      "action": "Increase database connection pool from 10 to 20",
+      "category": "immediate",
+      "reversible": true,
+      "reversible_time_seconds": 30,
+      "rollback": "Revert pool_size to 10 via /api/admin/pool-size",
+      "estimated_impact": "Resolves ~80% of timeout errors; latency normalizes in <1min",
+      "time_to_execute_seconds": 45,
+      "risks": "+10MB RAM; none if rollback is quick",
+      "requires_approval": false,
+      "requires_backup_first": false,
+      "windows_admin_required": false,
+      "can_rollback_automatically": true,
+      "estimated_downtime_seconds": 0,
+      "estimated_data_loss": "none",
+      "confidence_it_works": 0.95,
+      "implementation": "curl -X POST http://localhost:3000/api/admin/pool-size -H 'Authorization: Bearer $RH_TOKEN' -d '{\"size\": 20}'"
+    },
+    {
+      "priority": 2,
+      "action": "Review slow-query and request-rate logs to size the pool permanently",
+      "category": "short-term",
+      "reversible": true,
+      "action_type": "diagnostic",
+      "estimated_impact": "Prevents recurrence; may reveal an N+1 or missing index",
+      "time_to_execute_seconds": 300,
+      "requires_approval": false,
+      "requires_backup_first": false,
+      "confidence_it_works": 0.60,
+      "implementation": "Inspect logs for the window; correlate pool waits with endpoints"
+    }
+  ],
+  "metadata": {
+    "analyzed_at": "2026-07-21T14:24:05Z",
+    "model": "claude-opus-4-8",
+    "version": "1.0",
+    "note": "Hand-authored golden output — illustrative similar_incidents (no history store yet)."
+  }
+}

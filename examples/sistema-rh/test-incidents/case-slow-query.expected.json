@@ -1,0 +1,70 @@
+{
+  "diagnosis": {
+    "root_cause": "Slow query on the estoque dashboard, likely introduced by deploy 1.2.2 (missing index)",
+    "confidence": 0.75,
+    "reasoning": [
+      "db.latency_ms ~1820 is high but steady, not a spike",
+      "pool active/size = 3/10 with 0 waiting — the pool is NOT exhausted",
+      "slow-query warnings name SELECT ... FROM saldo_estoque JOIN historico_transacoes",
+      "deploy 1.2.2 at 10:30 changed the estoque dashboard query; symptoms start ~10:35",
+      "cpu 52% consistent with a query doing more work per call"
+    ],
+    "alternative_hypotheses": [
+      {
+        "hypothesis": "Data growth made an existing query slow",
+        "confidence": 0.40,
+        "why_less_likely": "timing lines up tightly with the 1.2.2 deploy, not gradual growth"
+      }
+    ],
+    "similar_incidents": [],
+    "affects_production": true,
+    "data_at_risk": false
+  },
+  "impact": {
+    "affected_percentage": 8,
+    "affected_count": "users of the estoque dashboard",
+    "affected_features": ["GET /api/estoque"],
+    "severity": "MEDIUM",
+    "duration_estimate": "persists until query/index fixed",
+    "business_impact": "Dashboard de estoque lento; sem erros, mas experiencia ruim"
+  },
+  "actions": [
+    {
+      "priority": 1,
+      "action": "Add an index supporting the estoque JOIN",
+      "category": "short-term",
+      "reversible": true,
+      "reversible_time_seconds": 30,
+      "rollback": "DROP INDEX if it does not help",
+      "estimated_impact": "Cuts query time from ~1800ms toward <100ms",
+      "time_to_execute_seconds": 120,
+      "risks": "Low — indexes are additive; brief write lock while building",
+      "requires_approval": true,
+      "requires_backup_first": true,
+      "windows_admin_required": false,
+      "can_rollback_automatically": true,
+      "estimated_downtime_seconds": 0,
+      "estimated_data_loss": "none",
+      "confidence_it_works": 0.70,
+      "implementation": "EXPLAIN QUERY PLAN the slow SELECT; CREATE INDEX on historico_transacoes(catalogo_id)"
+    },
+    {
+      "priority": 2,
+      "action": "If the index is not enough, review/rollback the 1.2.2 query change",
+      "category": "short-term",
+      "reversible": true,
+      "estimated_impact": "Returns to the 1.2.1 query behavior",
+      "time_to_execute_seconds": 120,
+      "requires_approval": true,
+      "requires_backup_first": false,
+      "windows_admin_required": false,
+      "confidence_it_works": 0.65,
+      "implementation": "git diff 1.2.1..1.2.2 server.js on the estoque query; revert if needed and redeploy"
+    }
+  ],
+  "metadata": {
+    "analyzed_at": "2026-07-21T11:03:00Z",
+    "model": "claude-opus-4-8",
+    "version": "1.0"
+  }
+}

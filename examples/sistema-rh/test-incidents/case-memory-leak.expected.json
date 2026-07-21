@@ -1,0 +1,70 @@
+{
+  "diagnosis": {
+    "root_cause": "Memory leak in the Express process — RSS grows monotonically without a request spike",
+    "confidence": 0.80,
+    "reasoning": [
+      "memory_mb climbs steadily 54 -> 81 -> 110 -> 138 -> 152 over 2h",
+      "requests_per_minute is a flat ~42 — the growth is not driven by load",
+      "db pool is nearly idle (2/10) and integrity is ok — not a database issue",
+      "a GC pause of 380ms appeared as memory got high",
+      "system memory at 88% — heading toward pressure if left unchecked"
+    ],
+    "alternative_hypotheses": [
+      {
+        "hypothesis": "Normal cache warm-up plateau",
+        "confidence": 0.35,
+        "why_less_likely": "growth is still linear at 2h with no sign of leveling off"
+      }
+    ],
+    "similar_incidents": [],
+    "affects_production": true,
+    "data_at_risk": false
+  },
+  "impact": {
+    "affected_percentage": 5,
+    "affected_count": "all users (degrading), no errors yet",
+    "affected_features": ["all endpoints (latency creep)"],
+    "severity": "MEDIUM",
+    "duration_estimate": "hours until OOM if not restarted",
+    "business_impact": "Latencia crescente; risco de queda por falta de memoria mais tarde"
+  },
+  "actions": [
+    {
+      "priority": 1,
+      "action": "Restart the Express process to reset memory",
+      "category": "immediate",
+      "reversible": true,
+      "reversible_time_seconds": 10,
+      "rollback": "n/a (stateless restart)",
+      "estimated_impact": "Frees memory immediately; buys time to find the leak",
+      "time_to_execute_seconds": 10,
+      "risks": "Brief downtime (~10s); drops in-flight requests",
+      "requires_approval": true,
+      "requires_backup_first": false,
+      "windows_admin_required": false,
+      "can_rollback_automatically": false,
+      "estimated_downtime_seconds": 10,
+      "estimated_data_loss": "none",
+      "confidence_it_works": 0.95,
+      "implementation": "Stop and relaunch node server.js (or restart the scheduled task / service)"
+    },
+    {
+      "priority": 2,
+      "action": "If memory climbs again within 1-2h, audit code for leaks",
+      "category": "long-term",
+      "reversible": true,
+      "action_type": "diagnostic",
+      "estimated_impact": "Finds the root leak (dangling handlers, unbounded cache)",
+      "time_to_execute_seconds": 1800,
+      "requires_approval": false,
+      "requires_backup_first": false,
+      "confidence_it_works": 0.70,
+      "implementation": "Take heap snapshots before/after; diff retained objects"
+    }
+  ],
+  "metadata": {
+    "analyzed_at": "2026-07-21T16:56:00Z",
+    "model": "claude-opus-4-8",
+    "version": "1.0"
+  }
+}

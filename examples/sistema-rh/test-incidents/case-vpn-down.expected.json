@@ -1,0 +1,71 @@
+{
+  "diagnosis": {
+    "root_cause": "Tailscale VPN disconnected — the company server is unreachable",
+    "confidence": 0.99,
+    "reasoning": [
+      "tailscale status = offline",
+      "ECONNREFUSED when connecting to company-server:3000",
+      "DNS resolution returns SERVFAIL",
+      "ping to the server gets no response",
+      "local system is idle (cpu 12%) — the app isn't the problem, the path to it is"
+    ],
+    "alternative_hypotheses": [
+      {
+        "hypothesis": "Express process crashed on the server",
+        "confidence": 0.10,
+        "why_less_likely": "we cannot even resolve/route to the host; a crashed app would still answer DNS and refuse the port from a reachable host"
+      }
+    ],
+    "similar_incidents": [],
+    "affects_production": true,
+    "data_at_risk": false
+  },
+  "impact": {
+    "affected_percentage": 100,
+    "affected_count": "all remote access",
+    "affected_features": ["All APIs", "Database access"],
+    "severity": "CRITICAL",
+    "duration_estimate": "ongoing until VPN reconnects",
+    "business_impact": "Sistema RH totalmente inacessivel remotamente; sem copia local do banco"
+  },
+  "actions": [
+    {
+      "priority": 1,
+      "action": "Reconnect Tailscale VPN",
+      "category": "immediate",
+      "reversible": true,
+      "reversible_time_seconds": 10,
+      "rollback": "n/a (reconnect only)",
+      "estimated_impact": "Restores routing to the company server",
+      "time_to_execute_seconds": 10,
+      "risks": "none",
+      "requires_approval": false,
+      "requires_backup_first": false,
+      "windows_admin_required": false,
+      "can_rollback_automatically": false,
+      "estimated_downtime_seconds": 0,
+      "estimated_data_loss": "none",
+      "confidence_it_works": 0.95,
+      "implementation": "tailscale up ; tailscale status  (or click Tailscale in the Windows tray -> Connect)"
+    },
+    {
+      "priority": 2,
+      "action": "If still offline, restart the Tailscale service",
+      "category": "immediate",
+      "reversible": true,
+      "rollback": "n/a",
+      "estimated_impact": "Recovers a crashed VPN client",
+      "time_to_execute_seconds": 15,
+      "requires_approval": true,
+      "requires_backup_first": false,
+      "windows_admin_required": true,
+      "confidence_it_works": 0.85,
+      "implementation": "Restart-Service Tailscale   (PowerShell as Administrator)"
+    }
+  ],
+  "metadata": {
+    "analyzed_at": "2026-07-21T08:13:00Z",
+    "model": "claude-opus-4-8",
+    "version": "1.0"
+  }
+}

@@ -96,12 +96,15 @@ Saída esperada:
 ```bash
 cd $SISTEMA_RH_PATH
 
-# Analyzer lê correlator + prompt especializado
-./.aiops/analyzer.sh
+# DRY-RUN é o padrão: monta o prompt e mostra o request, SEM chamar a API (sem custo).
+./.aiops/analyzer.sh --incident-file /tmp/incident-A7F.json
 
-# Ou com custom options
-./.aiops/analyzer.sh --incident-file /tmp/incident-A7F.json --confidence-threshold 0.80
+# EXECUTE (opt-in): chama a API de verdade. Exige ANTHROPIC_API_KEY.
+./.aiops/analyzer.sh --incident-file /tmp/incident-A7F.json --confidence-threshold 0.80 --execute
 ```
+
+> Detalhes de todas as flags e do endurecimento (structured outputs) em
+> [`docs/ANALYZER.md`](../../docs/ANALYZER.md).
 
 Saída esperada:
 

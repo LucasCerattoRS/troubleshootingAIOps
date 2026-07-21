@@ -1,0 +1,60 @@
+{
+  "incident": {
+    "id": "INC-2026-07-21-D4M",
+    "timestamp": "2026-07-21T16:55:00Z",
+    "window": {
+      "start": "2026-07-21T14:55:00Z",
+      "end": "2026-07-21T16:55:00Z"
+    }
+  },
+  "symptoms": [
+    {
+      "type": "PERFORMANCE",
+      "endpoint": "*",
+      "status_code": 200,
+      "error_rate_percent": 0,
+      "note": "latency creeping up, no errors yet",
+      "started_at": "2026-07-21T15:10:00Z"
+    }
+  ],
+  "signals": {
+    "application": {
+      "source": "express-health",
+      "status": "healthy",
+      "uptime_seconds": 7200,
+      "memory_mb": 152,
+      "requests_per_minute": 42,
+      "memory_samples": [
+        { "at": "2026-07-21T15:00:00Z", "memory_mb": 54 },
+        { "at": "2026-07-21T15:30:00Z", "memory_mb": 81 },
+        { "at": "2026-07-21T16:00:00Z", "memory_mb": 110 },
+        { "at": "2026-07-21T16:30:00Z", "memory_mb": 138 },
+        { "at": "2026-07-21T16:55:00Z", "memory_mb": 152 }
+      ],
+      "logs": [
+        { "level": "WARN", "message": "GC pause 380ms", "timestamp": "2026-07-21T16:52:00Z" }
+      ]
+    },
+    "database": {
+      "source": "sqlite-health",
+      "integrity_check": "ok",
+      "journal_mode": "wal",
+      "latency_ms": 90,
+      "pool": { "size": 10, "active": 2, "waiting": 0 }
+    },
+    "system": {
+      "source": "metrics",
+      "cpu_percent": 30,
+      "memory_percent": 88,
+      "disk_percent": 60
+    },
+    "network": {
+      "source": "tailscale-status",
+      "tailscale": "connected",
+      "ping_ms": 20
+    },
+    "events": [
+      { "type": "DEPLOY", "version": "1.2.1", "timestamp": "2026-07-21T09:05:00Z" }
+    ]
+  }
+}
