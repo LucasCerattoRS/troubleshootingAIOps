@@ -1,0 +1,54 @@
+{
+  "incident": {
+    "id": "INC-2026-07-21-E1Q",
+    "timestamp": "2026-07-21T11:02:00Z",
+    "window": {
+      "start": "2026-07-21T10:59:00Z",
+      "end": "2026-07-21T11:02:00Z"
+    }
+  },
+  "symptoms": [
+    {
+      "type": "PERFORMANCE",
+      "endpoint": "/api/estoque",
+      "status_code": 200,
+      "error_rate_percent": 0,
+      "note": "consistently slow, not a spike",
+      "started_at": "2026-07-21T10:35:00Z"
+    }
+  ],
+  "signals": {
+    "application": {
+      "source": "express-health",
+      "status": "degraded",
+      "uptime_seconds": 6900,
+      "memory_mb": 88,
+      "requests_per_minute": 35,
+      "logs": [
+        { "level": "WARN", "message": "slow query 1820ms: SELECT ... FROM saldo_estoque JOIN historico_transacoes", "timestamp": "2026-07-21T11:01:10Z" },
+        { "level": "WARN", "message": "slow query 1790ms: SELECT ... FROM saldo_estoque JOIN historico_transacoes", "timestamp": "2026-07-21T11:01:40Z" }
+      ]
+    },
+    "database": {
+      "source": "sqlite-health",
+      "integrity_check": "ok",
+      "journal_mode": "wal",
+      "latency_ms": 1820,
+      "pool": { "size": 10, "active": 3, "waiting": 0 }
+    },
+    "system": {
+      "source": "metrics",
+      "cpu_percent": 52,
+      "memory_percent": 70,
+      "disk_percent": 60
+    },
+    "network": {
+      "source": "tailscale-status",
+      "tailscale": "connected",
+      "ping_ms": 21
+    },
+    "events": [
+      { "type": "DEPLOY", "version": "1.2.2", "timestamp": "2026-07-21T10:30:00Z", "note": "changed estoque dashboard query" }
+    ]
+  }
+}

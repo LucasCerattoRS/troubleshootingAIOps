@@ -1,0 +1,49 @@
+{
+  "incident": {
+    "id": "INC-2026-07-21-B2K",
+    "timestamp": "2026-07-21T08:12:30Z",
+    "window": {
+      "start": "2026-07-21T08:09:30Z",
+      "end": "2026-07-21T08:12:30Z"
+    }
+  },
+  "symptoms": [
+    {
+      "type": "UNREACHABLE",
+      "endpoint": "*",
+      "status_code": null,
+      "error_rate_percent": 100,
+      "started_at": "2026-07-21T08:10:05Z"
+    }
+  ],
+  "signals": {
+    "application": {
+      "source": "express-health",
+      "status": "error",
+      "error": "ECONNREFUSED",
+      "detail": "connect to company-server:3000 failed",
+      "logs": [
+        { "level": "ERROR", "message": "ECONNREFUSED 100.x.x.x:3000", "timestamp": "2026-07-21T08:10:05Z" }
+      ]
+    },
+    "database": {
+      "source": "sqlite-health",
+      "status": "unknown",
+      "detail": "host unreachable — cannot query"
+    },
+    "system": {
+      "source": "metrics",
+      "cpu_percent": 12,
+      "memory_percent": 40,
+      "disk_percent": 55
+    },
+    "network": {
+      "source": "tailscale-status",
+      "tailscale": "offline",
+      "ping_ms": null,
+      "ping_result": "no response",
+      "dns": "SERVFAIL"
+    },
+    "events": []
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "incident": {
+    "id": "INC-2026-07-21-A7F",
+    "timestamp": "2026-07-21T14:23:45Z",
+    "window": {
+      "start": "2026-07-21T14:20:45Z",
+      "end": "2026-07-21T14:23:45Z"
+    }
+  },
+  "symptoms": [
+    {
+      "type": "API_ERROR",
+      "endpoint": "/api/dados",
+      "status_code": 500,
+      "error_rate_percent": 15,
+      "started_at": "2026-07-21T14:23:12Z"
+    }
+  ],
+  "signals": {
+    "application": {
+      "source": "express-health",
+      "status": "degraded",
+      "uptime_seconds": 43200,
+      "memory_mb": 92,
+      "requests_per_minute": 210,
+      "logs": [
+        { "level": "ERROR", "message": "SQLITE_BUSY: database is locked", "timestamp": "2026-07-21T14:23:12Z" },
+        { "level": "ERROR", "message": "SQLITE_BUSY: database is locked", "timestamp": "2026-07-21T14:23:14Z" },
+        { "level": "WARN", "message": "connection pool wait queue growing", "timestamp": "2026-07-21T14:23:15Z" }
+      ]
+    },
+    "database": {
+      "source": "sqlite-health",
+      "integrity_check": "ok",
+      "journal_mode": "wal",
+      "latency_ms": 5000,
+      "pool": { "size": 10, "active": 10, "waiting": 3 },
+      "file_size_mb": 48
+    },
+    "system": {
+      "source": "metrics",
+      "cpu_percent": 45,
+      "memory_percent": 78,
+      "disk_percent": 60
+    },
+    "network": {
+      "source": "tailscale-status",
+      "tailscale": "connected",
+      "ping_ms": 22
+    },
+    "events": [
+      { "type": "DEPLOY", "version": "1.2.1", "timestamp": "2026-07-21T09:05:00Z" }
+    ]
+  }
+}

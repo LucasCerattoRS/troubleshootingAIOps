@@ -10,27 +10,24 @@
 - [x] docs/CASES.md — casos reais (RH, FinanWise, TranscritorNPU)
 - [x] framework/correlator.md — template de correlação
 
-### Fase 2: Framework Genérico (Em progresso)
-- [ ] Coletores genéricos (bash/ps1)
-  - [ ] generic/health.sh
-  - [ ] generic/metrics.sh
-  - [ ] generic/logs.sh
-  - [ ] generic/events.sh
-- [ ] framework/analyzer.md — prompt template
-- [ ] framework/analyzer.sh — executa analyzer
-- [ ] framework/executor.sh — executa actions (Nível 2+)
+### Fase 2: Framework Genérico (Analyzer COMPLETO)
+- [x] framework/analyzer.md — design do analyzer
+- [x] framework/analyzer-template.prompt — prompt genérico (contrato de saída)
+- [x] framework/analyzer.sh + analyzer.ps1 — funcionais, **dry-run por padrão**
+- [x] docs/ANALYZER.md — guia de uso (flags, API, extensão, verificação)
+- [x] generic/health.sh + health.ps1
+- [ ] Coletores genéricos restantes (metrics, logs, events) — .sh + .ps1
+- [ ] framework/correlator.sh + correlator.ps1 (hoje só correlator.md)
+- [ ] framework/executor.sh + executor.ps1 (executa actions, Nível 2+)
 
-### Fase 3: Sistema RH Nível 1-2 (Próxima)
-- [ ] examples/sistema-rh/
-  - [ ] collectors/
-    - [ ] express-health.sh
-    - [ ] sqlite-health.sh
-    - [ ] logs.sh
-    - [ ] metrics.sh
-  - [ ] analyzer.md (especializado pra RH)
-  - [ ] actions/safe/ (reversíveis)
-    - [ ] increase-pool.sh
-    - [ ] clear-cache.sh
+### Fase 3: Sistema RH Nível 1-2 (Analyzer + fixtures prontos)
+- [x] examples/sistema-rh/analyzer.md (especializado — 5 padrões)
+- [x] examples/sistema-rh/collectors/express-health.sh + express-health.ps1
+- [x] examples/sistema-rh/test-incidents/ — 5 fixtures + 5 golden + README
+- [ ] collectors restantes: sqlite-health, logs, metrics, tailscale-status (.sh + .ps1)
+- [ ] actions/safe/ (reversíveis)
+    - [ ] increase-pool.sh + .ps1
+    - [ ] clear-cache.sh + .ps1
 
 ### Fase 4: Integração GitHub Actions (Depois)
 - [ ] .github/workflows/aiops-collect.yml
@@ -49,22 +46,20 @@
 
 ---
 
+## Progresso 21/07/2026 (noite) — Analyzer completo
+
+Fechado o **analyzer** como peça de preparação (nada roda até `--execute`):
+prompt genérico + especializado do RH, `analyzer.sh`/`.ps1` funcionais em dry-run,
+5 fixtures de incidente + 5 golden, pares `.ps1` dos coletores, `docs/ANALYZER.md`.
+Decisões travadas com o Lukas: scripts em **par .sh + .ps1**; profundidade **todos**.
+
 ## Próxima Sessão — O que fazer
 
-1. **Criar coletores genéricos**
-   - Bash scripts simples (Linux/macOS) e PowerShell (Windows)
-   - Cada um retorna JSON
-   - Sem dependências externas (apenas curl, jq)
-
-2. **Criar exemplo completo para Sistema RH**
-   - Coletores específicos (express health, sqlite health)
-   - Analyzer prompt especializado
-   - Testar com exemplos reais de incidente
-
-3. **Validar framework**
-   - Rodar correlator + analyzer manualmente
-   - Verificar JSON estrutura
-   - Documentar padrões
+1. **Coletores restantes** (par .sh + .ps1): metrics, logs, events, sqlite-health, tailscale-status.
+2. **correlator.sh + correlator.ps1** — hoje só existe o `correlator.md` (design). Fazer o script que junta os coletores no JSON de incidente que o analyzer consome.
+3. **executor.sh + executor.ps1** (Nível 2) — actions reversíveis (increase-pool, clear-cache) com rollback.
+4. **Test runner** — roda cada fixture pelo analyzer e compara campos-chave (não diff literal) contra o `.expected.json`.
+5. **Rodar o dry-run** de ponta a ponta e, quando o Lukas autorizar gasto de crédito, um `--execute` de validação.
 
 ---
 
