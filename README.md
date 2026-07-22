@@ -89,6 +89,39 @@ troubleshootingAIOps/
 
 ## Começar
 
+### 0. Rodar a cadeia inteira — offline, sem crédito, sem tocar a API
+
+A pipeline `coletores → correlator → analyzer → executor` é demonstrável sem nada rodar de
+verdade. Tudo abaixo lê arquivos locais e monta prompts em **dry-run**:
+
+```bash
+# 1) coletores(mock) -> correlator -> incidente
+framework/correlator.sh \
+  --manifest examples/sistema-rh/collectors.manifest.json \
+  --mock-dir examples/sistema-rh/mock-signals --output /tmp/incident.json
+
+# 2) incidente -> analyzer (dry-run: monta o prompt, NÃO chama a API)
+framework/analyzer.sh --incident-file /tmp/incident.json
+
+# 3) executor: mostra o que faria + o rollback + os gates (NÃO executa)
+framework/executor.sh --action increase-pool
+
+# 4) test runner: valida as 5 fixtures pelo analyzer em dry-run
+framework/test-analyzer.sh
+```
+
+```powershell
+# Windows (PowerShell) — mesma cadeia
+.\framework\correlator.ps1 -Manifest .\examples\sistema-rh\collectors.manifest.json `
+  -MockDir .\examples\sistema-rh\mock-signals -Output $env:TEMP\incident.json
+.\framework\analyzer.ps1 -IncidentFile $env:TEMP\incident.json
+.\framework\executor.ps1 -Action increase-pool
+.\framework\test-analyzer.ps1
+```
+
+> `--execute` (analyzer/executor) e `--Execute` (test-analyzer) são **opt-in** e gastam
+> crédito / mudam estado. Nada disso roda por padrão.
+
 ### 1. Leia a documentação
 
 ```bash
@@ -100,6 +133,9 @@ cat docs/NIVEIS.md
 
 # Casos reais
 cat docs/CASES.md
+
+# Os pilares operacionais
+cat docs/ANALYZER.md docs/CORRELATOR.md docs/EXECUTOR.md
 ```
 
 ### 2. Explore o exemplo Sistema RH
