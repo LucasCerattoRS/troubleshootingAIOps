@@ -10,24 +10,22 @@
 - [x] docs/CASES.md — casos reais (RH, FinanWise, TranscritorNPU)
 - [x] framework/correlator.md — template de correlação
 
-### Fase 2: Framework Genérico (Analyzer COMPLETO)
-- [x] framework/analyzer.md — design do analyzer
-- [x] framework/analyzer-template.prompt — prompt genérico (contrato de saída)
+### Fase 2: Framework Genérico ✅ (pipeline inteiro em par .sh/.ps1)
+- [x] framework/analyzer.md + analyzer-template.prompt — design + prompt genérico
 - [x] framework/analyzer.sh + analyzer.ps1 — funcionais, **dry-run por padrão**
-- [x] docs/ANALYZER.md — guia de uso (flags, API, extensão, verificação)
-- [x] generic/health.sh + health.ps1
-- [ ] Coletores genéricos restantes (metrics, logs, events) — .sh + .ps1
-- [ ] framework/correlator.sh + correlator.ps1 (hoje só correlator.md)
-- [ ] framework/executor.sh + executor.ps1 (executa actions, Nível 2+)
+- [x] Coletores genéricos: health, metrics, logs, events (.sh + .ps1)
+- [x] framework/correlator.sh + correlator.ps1 — dirigido por manifesto, --mock-dir
+- [x] framework/executor.sh + executor.ps1 — gates + rollback + auditoria JSONL
+- [x] framework/test-analyzer.sh + .ps1 — runner offline (dry-run) + --execute
+- [x] docs/ANALYZER.md, CORRELATOR.md, EXECUTOR.md
 
-### Fase 3: Sistema RH Nível 1-2 (Analyzer + fixtures prontos)
-- [x] examples/sistema-rh/analyzer.md (especializado — 5 padrões)
-- [x] examples/sistema-rh/collectors/express-health.sh + express-health.ps1
-- [x] examples/sistema-rh/test-incidents/ — 5 fixtures + 5 golden + README
-- [ ] collectors restantes: sqlite-health, logs, metrics, tailscale-status (.sh + .ps1)
-- [ ] actions/safe/ (reversíveis)
-    - [ ] increase-pool.sh + .ps1
-    - [ ] clear-cache.sh + .ps1
+### Fase 3: Sistema RH Nível 1-2 ✅
+- [x] analyzer.md especializado (5 padrões)
+- [x] Coletores: express-health, sqlite-health, tailscale-status (.sh + .ps1)
+- [x] collectors.manifest.json + mock-signals/ (5 arquivos)
+- [x] test-incidents/ — 5 fixtures + 5 golden + README
+- [x] actions/safe/ — increase-pool + clear-cache (.sh + .ps1, 3 modos) + README
+      ⚠ pré-req: endpoints /api/admin/* NÃO existem no Sistema RH ainda
 
 ### Fase 4: Integração GitHub Actions (Depois)
 - [ ] .github/workflows/aiops-collect.yml
@@ -46,20 +44,21 @@
 
 ---
 
-## Progresso 21/07/2026 (noite) — Analyzer completo
+## Progresso 21/07/2026 (noite) — Pipeline inteiro fechado (preparação)
 
-Fechado o **analyzer** como peça de preparação (nada roda até `--execute`):
-prompt genérico + especializado do RH, `analyzer.sh`/`.ps1` funcionais em dry-run,
-5 fixtures de incidente + 5 golden, pares `.ps1` dos coletores, `docs/ANALYZER.md`.
-Decisões travadas com o Lukas: scripts em **par .sh + .ps1**; profundidade **todos**.
+Roadmap "tudo" concluído em 4 commits (A coletores, B correlator, C executor, D test runner).
+A cadeia **coletores → correlator → analyzer → executor** existe de ponta a ponta e roda
+**offline** (dry-run/mock), nada toca a API. Provado nesta sessão em PowerShell (sem jq no
+ambiente): correlator --mock-dir bate o shape das fixtures; cadeia coletores(mock)→correlator→
+analyzer(dry-run) monta o prompt; executor dry-run mostra gates + rollback; test-analyzer
+offline 5/5 PASS.
 
 ## Próxima Sessão — O que fazer
 
-1. **Coletores restantes** (par .sh + .ps1): metrics, logs, events, sqlite-health, tailscale-status.
-2. **correlator.sh + correlator.ps1** — hoje só existe o `correlator.md` (design). Fazer o script que junta os coletores no JSON de incidente que o analyzer consome.
-3. **executor.sh + executor.ps1** (Nível 2) — actions reversíveis (increase-pool, clear-cache) com rollback.
-4. **Test runner** — roda cada fixture pelo analyzer e compara campos-chave (não diff literal) contra o `.expected.json`.
-5. **Rodar o dry-run** de ponta a ponta e, quando o Lukas autorizar gasto de crédito, um `--execute` de validação.
+1. **Validação com crédito** (decisão do Lukas): `analyzer.sh --execute` e `test-analyzer.sh --execute` numa fixture, pra ver o diagnóstico real do modelo vs golden.
+2. **Sistema RH — endpoints admin**: implementar `POST /api/admin/pool-size` e `/api/admin/cache/clear` no repo Sistema_RH pra destravar o `executor --execute` (ver actions/README.md).
+3. **Correlator ao vivo na empresa**: rodar `correlator.sh` sem `--mock-dir` na máquina do RH (precisa banco + Tailscale).
+4. **Opcional**: derivar `symptoms` por regra no correlator; GitHub Actions (Fase 4); exemplo FinanWise (Fase 5).
 
 ---
 

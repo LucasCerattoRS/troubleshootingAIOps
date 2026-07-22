@@ -132,10 +132,14 @@ Ver `docs/PADROES.md` — template pra adicionar novo sistema em 10 min.
 | Componente | Status | Notas |
 |------------|--------|-------|
 | Arquitetura | ✅ Documentada | 4 pilares + 3 níveis |
-| Framework genérico | 🟡 Em progresso | Coletores base |
-| Sistema RH (ex.) | 🟡 Em progresso | Nível 2 |
+| Framework genérico | ✅ Completo | analyzer · correlator · executor · test runner (par .sh/.ps1, dry-run por padrão) |
+| Sistema RH (ex.) | ✅ Pipeline pronto | coletores + manifesto + 5 fixtures/golden + ações seguras (offline; `--execute` precisa dos endpoints admin) |
 | FinanWise (ex.) | ⏳ Planejado | Nível 1 |
 | TranscritorNPU (ex.) | ⏳ Planejado | Nível 1 |
+
+> **Preparação, não produção:** todo script que toca rede ou muda estado nasce em **dry-run**;
+> `--execute` é opt-in e ainda não foi rodado (não gasta crédito por acidente). A cadeia inteira
+> é demonstrável offline — ver `docs/CORRELATOR.md`, `docs/ANALYZER.md`, `docs/EXECUTOR.md`.
 
 ---
 
