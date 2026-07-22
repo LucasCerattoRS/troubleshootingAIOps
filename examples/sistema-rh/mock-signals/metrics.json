@@ -1,0 +1,9 @@
+{
+  "collected_at": 1784823825,
+  "timestamp": "2026-07-21T14:23:45Z",
+  "source": "metrics",
+  "mount": "/",
+  "cpu_percent": 45,
+  "memory_percent": 78,
+  "disk_percent": 60
+}
