@@ -1,0 +1,32 @@
+{
+  "system": "sistema-rh",
+  "window_minutes": 3,
+  "description": "Mapeia cada slot de signals do incidente para um coletor. O correlator lê .sh no Bash e .ps1 no PowerShell; em --mock-dir usa .mock (offline).",
+  "signals": {
+    "application": {
+      "mock": "express-health.json",
+      "sh":  { "collector": "examples/sistema-rh/collectors/express-health.sh",  "args": [] },
+      "ps1": { "collector": "examples/sistema-rh/collectors/express-health.ps1", "args": [] }
+    },
+    "database": {
+      "mock": "sqlite-health.json",
+      "sh":  { "collector": "examples/sistema-rh/collectors/sqlite-health.sh",  "args": ["--db", "banco.sqlite", "--backup-dir", "backups"] },
+      "ps1": { "collector": "examples/sistema-rh/collectors/sqlite-health.ps1", "args": ["-Db", "banco.sqlite", "-BackupDir", "backups"] }
+    },
+    "system": {
+      "mock": "metrics.json",
+      "sh":  { "collector": "framework/collectors/generic/metrics.sh",  "args": ["/"] },
+      "ps1": { "collector": "framework/collectors/generic/metrics.ps1", "args": ["-DriveLetter", "C"] }
+    },
+    "network": {
+      "mock": "tailscale-status.json",
+      "sh":  { "collector": "examples/sistema-rh/collectors/tailscale-status.sh",  "args": [] },
+      "ps1": { "collector": "examples/sistema-rh/collectors/tailscale-status.ps1", "args": [] }
+    },
+    "events": {
+      "mock": "events.json",
+      "sh":  { "collector": "framework/collectors/generic/events.sh",  "args": ["--repo", ".", "--since-minutes", "180"] },
+      "ps1": { "collector": "framework/collectors/generic/events.ps1", "args": ["-Repo", ".", "-SinceMinutes", "180"] }
+    }
+  }
+}

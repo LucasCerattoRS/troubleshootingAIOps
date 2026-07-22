@@ -1,0 +1,14 @@
+{
+  "collected_at": 1784823825,
+  "timestamp": "2026-07-21T14:23:45Z",
+  "source": "express-health",
+  "host": "localhost:3000",
+  "status": "degraded",
+  "uptime_seconds": 43200,
+  "memory_mb": 92,
+  "requests_per_minute": 210,
+  "db": { "status": "timeout", "latency_ms": 5000, "pool": { "size": 10, "active": 10, "waiting": 3 } },
+  "logs": [
+    { "level": "ERROR", "message": "SQLITE_BUSY: database is locked", "timestamp": "2026-07-21T14:23:12Z" }
+  ]
+}

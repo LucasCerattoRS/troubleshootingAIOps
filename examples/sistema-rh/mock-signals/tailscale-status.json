@@ -1,0 +1,10 @@
+{
+  "collected_at": 1784823825,
+  "timestamp": "2026-07-21T14:23:45Z",
+  "source": "tailscale-status",
+  "tailscale": "connected",
+  "peer": "company-server",
+  "ping_ms": 22,
+  "ping_result": "ok",
+  "dns": "ok"
+}
