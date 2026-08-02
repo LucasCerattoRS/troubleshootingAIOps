@@ -239,6 +239,17 @@ tail -3 ./logs/*error* 2>/dev/null || echo "No error log"
 - [ ] Primeira coleta rodou sem erro
 - [ ] JSON output é válido
 
+## Checklist antes de "Produção"
+
+(Movido de `analyzer.md` — é um checklist de dev, não instrução pro modelo. `analyzer.sh` faz `cat` literal do `analyzer.md` no prompt, então checklist de maturidade do projeto não deve morar lá.)
+
+- [ ] Analisador entende 5+ padrões do RH
+- [ ] Testes passam (5+ casos, confidence correta)
+- [ ] Backup é mandatório antes de ações com risco
+- [ ] Ações reversíveis têm rollback
+- [ ] Windows/PowerShell considerado (admin, paths, services)
+- [ ] Negócio context está documentado (horário, usuários, SLA)
+
 ---
 
 ## Próximos Passos

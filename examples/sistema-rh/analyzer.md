@@ -2,7 +2,7 @@
 
 Estende `framework/analyzer-template.prompt` com conhecimento específico do Portal RH + EPI.
 
----
+<system_context>
 
 ## Contexto do Sistema
 
@@ -356,13 +356,4 @@ Ver arquivo: `examples/sistema-rh/test-incidents/case-db-corrupt.json`
 - Action 1: Restore from backup (requires backup_first)
 - Data loss: ~24h de dados
 
----
-
-## Checklist antes de "Produção"
-
-- [ ] Analisador entende 5+ padrões do RH
-- [ ] Testes passam (5+ casos, confidence correta)
-- [ ] Backup é mandatório antes de ações com risco
-- [ ] Ações reversíveis têm rollback
-- [ ] Windows/PowerShell considerado (admin, paths, services)
-- [ ] Negócio context está documentado (horário, usuários, SLA)
+</system_context>
