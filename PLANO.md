@@ -42,6 +42,17 @@
 - [ ] Rollback automático
 - [ ] Learning loop
 
+### Fase 7: Observabilidade real — OpenTelemetry + Grafana (Depois da validação com crédito)
+Registrado em 10/08/2026 (avaliação do vault "Ferramentas, Stack e IA"), condicionado à Fase 6 do
+"Próxima Sessão" (validar `--execute` com crédito real primeiro — sem isso não há dado real pra
+instrumentar).
+- [ ] **OpenTelemetry** — trocar os coletores bash/PowerShell atuais (ou complementá-los) por
+  instrumentação padrão via `opentelemetry-collector` (Apache 2.0, CNCF graduado mai/2026).
+  Encaixa direto no pilar 1 (Coleta) sem mudar a filosofia "sem magia, reutilizável".
+- [ ] **Grafana** — dashboard sobre os dados do OpenTelemetry (self-host, AGPLv3). Cuidado com
+  custo de RAM/storage local antes de deixar rodando 24/7.
+- [ ] Ainda **não instalado nem validado** — só a decisão de onde entra no framework.
+
 ---
 
 ## Progresso 21/07/2026 (noite) — Pipeline inteiro fechado (preparação)

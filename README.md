@@ -172,6 +172,7 @@ Ver `docs/PADROES.md` — template pra adicionar novo sistema em 10 min.
 | Sistema RH (ex.) | ✅ Pipeline pronto | coletores + manifesto + 5 fixtures/golden + ações seguras (offline; `--execute` precisa dos endpoints admin) |
 | FinanWise (ex.) | ⏳ Planejado | Nível 1 |
 | TranscritorNPU (ex.) | ⏳ Planejado | Nível 1 |
+| Observabilidade real (OpenTelemetry + Grafana) | ⏳ Planejado (Fase 7) | Ver PLANO.md — condicionado à validação com crédito real primeiro |
 
 > **Preparação, não produção:** todo script que toca rede ou muda estado nasce em **dry-run**;
 > `--execute` é opt-in e ainda não foi rodado (não gasta crédito por acidente). A cadeia inteira
