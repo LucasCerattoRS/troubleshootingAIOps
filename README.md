@@ -223,10 +223,9 @@ framework/executor.sh --action increase-pool --execute -- --size 20 --old 10
 - **`--execute` nunca foi rodado** (analyzer, test runner e executor).
 - **Endpoints admin inexistentes**: `increase-pool` e `clear-cache` chamam
   `/api/admin/pool-size` e `/api/admin/cache/clear`, que não existem no Sistema RH ainda.
-- **`examples/sistema-rh/collectors/express-health.sh` tem um erro de jq**: o filtro contém
-  `// safe calc` como se fosse comentário. Em jq, `//` é o operador "alternativa", e `safe`
-  não existe, então o filtro não compila e o slot `application` sai como erro no modo ao vivo.
-  O par `.ps1` não tem o problema (lê `pool_waiting` do payload). O modo mock não é afetado.
+- Os filtros jq dos `.sh` são validados offline por `tests/jq-filtros.sh` (coletores com
+  stubs de curl/sqlite3/tailscale, correlator em mock, analyzer/executor em dry-run), rodado
+  no CI (`.github/workflows/check.yml`) junto com `shellcheck`.
 - `symptoms` do incidente é sempre `[]`; os casos de teste trazem sintomas escritos à mão.
 - `similar_incidents` nos golden outputs são ilustrativos: não há armazenamento de histórico.
 - `docs/ARQUITETURA.md`/`NIVEIS.md` descrevem a visão completa (nível 3, aprendizado,

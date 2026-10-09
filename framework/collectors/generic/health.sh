@@ -18,12 +18,13 @@ response=$(curl -s -m "$TIMEOUT" "http://$HOST/health" 2>&1 || echo '{"error":"T
 # Valida JSON
 if ! jq . <<< "$response" > /dev/null 2>&1; then
   jq -n \
+    --argjson collected_at "$TIMESTAMP" \
     --arg host "$HOST" \
     --arg error "INVALID_JSON" \
     --arg response "$response" \
     --arg timestamp "$TIMESTAMP_ISO" \
     '{
-      collected_at: '$TIMESTAMP',
+      collected_at: $collected_at,
       timestamp: $timestamp,
       source: "health-check",
       status: "error",

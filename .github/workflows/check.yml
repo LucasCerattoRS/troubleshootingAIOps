@@ -1,0 +1,18 @@
+name: check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  sh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: shellcheck
+        # jq e shellcheck já vêm na imagem ubuntu-latest
+        run: git ls-files '*.sh' | xargs shellcheck -S warning
+      - name: filtros jq
+        run: bash tests/jq-filtros.sh

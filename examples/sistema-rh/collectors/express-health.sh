@@ -15,15 +15,16 @@ TIMESTAMP=$(date -u +%s)
 TIMESTAMP_ISO=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 # Health check — deve ser rapidinho
-response=$(curl -s -m "$TIMEOUT" "http://$HOST/health" 2>&1)
+response=$(curl -s -m "$TIMEOUT" "http://$HOST/health" 2>&1 || true)  # sem isso, set -e mata o script sem emitir o JSON de erro
 
 # Se não foi JSON válido
-if ! jq empty <<< "$response" 2>/dev/null; then
+if [[ -z "$response" ]] || ! jq empty <<< "$response" 2>/dev/null; then
   jq -n \
+    --argjson collected_at "$TIMESTAMP" \
     --arg timestamp "$TIMESTAMP_ISO" \
     --arg error "$response" \
     '{
-      collected_at: '$TIMESTAMP',
+      collected_at: $collected_at,
       timestamp: $timestamp,
       source: "express-health",
       status: "error",
@@ -58,7 +59,8 @@ jq \
       pool: {
         size: .pool_size,
         active: .pool_active,
-        waiting: (.pool_active - .pool_size // 0)  // safe calc
+        # pool_waiting pode faltar no payload; default 0 (igual ao .ps1)
+        waiting: (.pool_waiting // 0)
       }
     }
   }' <<< "$response"
