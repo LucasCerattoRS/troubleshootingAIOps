@@ -18,7 +18,7 @@ FAIL=0
 mkdir -p "$TMP/bin"
 cat > "$TMP/bin/curl" <<'EOF'
 #!/bin/bash
-printf '%s' "${STUB_CURL:-}"
+printf "%s" "${STUB_CURL:-}"; exit "${STUB_CURL_RC:-0}"
 EOF
 cat > "$TMP/bin/sqlite3" <<'EOF'
 #!/bin/bash
@@ -62,6 +62,7 @@ HEALTH='{"status":"degraded","uptime_seconds":43200,"memory_mb":92,"requests_per
 STUB_CURL="$HEALTH"            check express-health        0 bash "$C/express-health.sh"
 STUB_CURL='{"status":"healthy"}' check express-health-minimo 0 bash "$C/express-health.sh"
 STUB_CURL='nao e json'         check express-health-erro   1 bash "$C/express-health.sh"
+STUB_CURL_RC=7                 check express-health-offline 1 bash "$C/express-health.sh"
 STUB_CURL="$HEALTH"            check health                0 bash "$G/health.sh"
 STUB_CURL='nao e json'         check health-erro           1 bash "$G/health.sh"
 check sqlite-health        0 bash "$C/sqlite-health.sh" --db "$TMP/banco.sqlite" --backup-dir "$TMP/backups"
