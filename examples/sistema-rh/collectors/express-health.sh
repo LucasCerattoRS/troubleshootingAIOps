@@ -17,8 +17,8 @@ TIMESTAMP_ISO=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 # Health check — deve ser rapidinho
 response=$(curl -s -m "$TIMEOUT" "http://$HOST/health" 2>&1 || true)  # sem isso, set -e mata o script sem emitir o JSON de erro
 
-# Se não foi JSON válido
-if [[ -z "$response" ]] || ! jq empty <<< "$response" 2>/dev/null; then
+# Se não foi um objeto JSON válido
+if [[ -z "$response" ]] || ! jq -e 'type == "object"' <<< "$response" >/dev/null 2>&1; then
   jq -n \
     --argjson collected_at "$TIMESTAMP" \
     --arg timestamp "$TIMESTAMP_ISO" \
