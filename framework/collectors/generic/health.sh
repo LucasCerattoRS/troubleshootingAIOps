@@ -16,7 +16,8 @@ TIMESTAMP_ISO=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 response=$(curl -s -m "$TIMEOUT" "http://$HOST/health" 2>&1 || echo '{"error":"TIMEOUT","message":"No response from endpoint"}')
 
 # Valida JSON
-if ! jq . <<< "$response" > /dev/null 2>&1; then
+# exige objeto JSON: vazio, array, string ou número quebrariam o filtro abaixo
+if ! jq -e 'type == "object"' <<< "$response" > /dev/null 2>&1; then
   jq -n \
     --argjson collected_at "$TIMESTAMP" \
     --arg host "$HOST" \

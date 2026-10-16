@@ -151,6 +151,19 @@ STUB_CURL='lixo' expect v-health-invalido 1 '{
   "source":"health-check","status":"error","error":"INVALID_JSON",
   "host":"localhost:3000","raw_response":"lixo"}' bash "$G/health.sh"
 
+# JSON válido porém não-objeto (array, string, número) e resposta vazia: tem de virar JSON de erro, rc 1
+for body in '[]' '"ok"' '42' ''; do
+  STUB_CURL="$body" DEL='.details,.raw_response' expect "v-express-nao-objeto[$body]" 1 '{
+    "source":"express-health","status":"error",
+    "error":"Health endpoint unreachable or invalid JSON"}' bash "$C/express-health.sh"
+  STUB_CURL="$body" DEL='.raw_response' expect "v-health-nao-objeto[$body]" 1 '{
+    "source":"health-check","status":"error","error":"INVALID_JSON","host":"localhost:3000"}' \
+    bash "$G/health.sh"
+done
+# mount inexistente: disk_percent vira null (como o cabeçalho promete), não derruba o coletor
+CHK='.disk_percent==null' DEL='.cpu_percent,.memory_percent,.disk_percent' expect v-metrics-mount-invalido 0 \
+  '{"source":"metrics","mount":"/nao/existe"}' bash "$G/metrics.sh" /nao/existe
+
 # sqlite-health: banco de 3 MB, backup mais novo com 5h
 truncate -s 3M "$TMP/banco3.sqlite"; mkdir -p "$TMP/bk"
 : > "$TMP/bk/velho.sqlite"; touch -d '3 days ago' "$TMP/bk/velho.sqlite"

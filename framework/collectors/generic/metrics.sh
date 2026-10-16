@@ -38,7 +38,7 @@ if [[ -r /proc/meminfo ]]; then
 fi
 
 # --- Disco: df do mount pedido ---
-disk_percent="$(df -P "$MOUNT" 2>/dev/null | awk 'NR==2{gsub("%","",$5); print $5}')"
+disk_percent="$(df -P "$MOUNT" 2>/dev/null | awk 'NR==2{gsub("%","",$5); print $5}' || true)"
 [[ -n "${disk_percent:-}" ]] || disk_percent=null
 
 jq -n \
