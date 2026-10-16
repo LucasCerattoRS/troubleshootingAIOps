@@ -2,6 +2,11 @@
 
 ## Status Atual (21/07/2026)
 
+> Registro 16/10/2026 — smoke dos coletores: `tests/jq-filtros.sh` passou a cobrir resposta
+> não-objeto/vazia (express-health, health) e mount inexistente (metrics); 3 bugs corrigidos.
+> Não existem coletores de nuvem no repo (só locais); não validados: `.ps1` (sem pwsh no ambiente)
+> e `shellcheck` (não instalado aqui; roda no CI).
+
 ### Fase 1: Arquitetura ✅
 - [x] README.md — visão geral
 - [x] CLAUDE.md — guias de trabalho
