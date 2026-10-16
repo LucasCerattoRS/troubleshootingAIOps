@@ -1,0 +1,1 @@
+{"status":"degraded","uptime_seconds":43200,"memory_mb":92,"requests_per_minute":210,"db":"timeout","db_latency_ms":5000,"pool_size":10,"pool_active":10,"pool_waiting":3}

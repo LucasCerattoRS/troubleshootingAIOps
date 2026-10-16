@@ -1,0 +1,1 @@
+{"status":"healthy","uptime_seconds":60,"memory_mb":40,"requests_per_minute":5,"db":"ok","db_latency_ms":3,"pool_size":10,"pool_active":1}
