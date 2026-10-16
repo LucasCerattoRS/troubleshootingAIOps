@@ -225,7 +225,9 @@ framework/executor.sh --action increase-pool --execute -- --size 20 --old 10
   `/api/admin/pool-size` e `/api/admin/cache/clear`, que não existem no Sistema RH ainda.
 - Os filtros jq dos `.sh` são validados offline por `tests/jq-filtros.sh` (coletores com
   stubs de curl/sqlite3/tailscale, correlator em mock, analyzer/executor em dry-run), rodado
-  no CI (`.github/workflows/check.yml`) junto com `shellcheck`.
+  no CI (`.github/workflows/check.yml`) junto com `shellcheck`. Além de "compila", o teste
+  confere os **valores** de saída campo a campo (helper `expect`, fixtures em `tests/fixtures/`).
+  Pendência: analyzer/executor/test-analyzer só têm checagem de rc, não de conteúdo.
 - `symptoms` do incidente é sempre `[]`; os casos de teste trazem sintomas escritos à mão.
 - `similar_incidents` nos golden outputs são ilustrativos: não há armazenamento de histórico.
 - `docs/ARQUITETURA.md`/`NIVEIS.md` descrevem a visão completa (nível 3, aprendizado,
