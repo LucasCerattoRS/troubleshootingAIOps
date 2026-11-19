@@ -232,6 +232,17 @@ expect v-logs-limpo 0 "{\"source\":\"logs\",\"file\":\"$TMP/limpo.log\",\"lines_
 expect v-logs-erro 1 '{"source":"logs","status":"error","error":"--file é obrigatório","file":""}' \
   bash "$G/logs.sh"
 
+# logs/events: argumento inválido vira JSON de erro (rc 1), nunca "log limpo" nem erro cru do jq
+expect v-logs-regex-invalida 1 "{\"source\":\"logs\",\"status\":\"error\",
+  \"error\":\"padrão --pattern inválido para grep -E: (\",\"file\":\"$TMP/l.log\"}" \
+  bash "$G/logs.sh" --file "$TMP/l.log" --pattern '('
+expect v-logs-lines-invalido 1 "{\"source\":\"logs\",\"status\":\"error\",
+  \"error\":\"--lines precisa ser inteiro >= 0: abc\",\"file\":\"$TMP/l.log\"}" \
+  bash "$G/logs.sh" --file "$TMP/l.log" --lines abc
+expect v-events-since-invalido 1 "{\"source\":\"events\",\"status\":\"error\",
+  \"error\":\"--since-minutes precisa ser inteiro >= 0: 1x\",\"repo\":\"$GR\"}" \
+  bash "$G/events.sh" --repo "$GR" --since-minutes 1x
+
 # metrics: valores do host variam; confere tipo e faixa 0..100
 CHK='all(.cpu_percent,.memory_percent,.disk_percent; type=="number" and .>=0 and .<=100)' \
   DEL='.cpu_percent,.memory_percent,.disk_percent' expect v-metrics 0 '{"source":"metrics","mount":"/"}' \
