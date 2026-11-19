@@ -31,6 +31,7 @@ emit_error() {
   exit 1
 }
 
+[[ "$SINCE_MIN" =~ ^[0-9]+$ ]] || emit_error "--since-minutes precisa ser inteiro >= 0: $SINCE_MIN"
 command -v git >/dev/null 2>&1 || emit_error "git não encontrado"
 git -C "$REPO" rev-parse --git-dir >/dev/null 2>&1 || emit_error "não é um repositório git: $REPO"
 

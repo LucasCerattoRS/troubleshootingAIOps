@@ -38,9 +38,16 @@ emit_error() {
 
 [[ -n "$FILE" ]] || emit_error "--file é obrigatório"
 [[ -f "$FILE" ]] || emit_error "arquivo de log não encontrado: $FILE"
+[[ -r "$FILE" ]] || emit_error "arquivo de log sem permissão de leitura: $FILE"
+[[ "$LINES" =~ ^[0-9]+$ ]] || emit_error "--lines precisa ser inteiro >= 0: $LINES"
 
-# tail + filtro; `|| true` porque grep sai 1 quando não casa nada (log limpo).
-RAW="$(tail -n "$LINES" "$FILE" 2>/dev/null | grep -E "$PATTERN" || true)"
+# Erro de leitura ou regex inválida NÃO pode virar "log limpo" (matched 0):
+# para quem diagnostica, isso é um falso tudo-certo. grep sai 1 quando não
+# casa nada (log limpo, ok) e 2 em erro (ex.: padrão '(' sem fechar).
+TAIL="$(tail -n "$LINES" "$FILE" 2>/dev/null)" || emit_error "falha ao ler o arquivo de log: $FILE"
+RC=0
+RAW="$(printf '%s\n' "$TAIL" | grep -E -- "$PATTERN" 2>/dev/null)" || RC=$?
+(( RC <= 1 )) || emit_error "padrão --pattern inválido para grep -E: $PATTERN"
 
 LOGS="$(printf '%s' "$RAW" | jq -R -s '
   split("\n")
